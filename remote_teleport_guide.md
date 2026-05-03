@@ -14,6 +14,65 @@ the results back to your local machine.
 
 ---
 
+## Step 0 — Connect your GitHub repo to claude.ai
+
+This is a one-time setup. The cloud session uses a **GitHub App** (not your personal
+token) to clone and push. The App must be installed on each target repo with write
+access; without it every `git push` in a remote session fails with
+`403 Resource not accessible by integration`.
+
+### Install the GitHub App
+
+1. Go to **github.com/apps/claude** and click **Install**.
+2. Select your GitHub account or organisation.
+3. Under **Repository access**, choose **Only select repositories** and check the
+   repo you want to use (e.g. `agent_everywhere`).
+4. Click **Install** — GitHub redirects you back to claude.ai automatically.
+
+### Confirm the connection in claude.ai
+
+1. Open **claude.ai/code** in your browser.
+2. In the repository selector below the prompt input, your repo should now appear
+   in the dropdown.
+3. If it is missing: go to **GitHub → Settings → Applications → Claude → Configure**
+   and verify the repo is listed under *Repository access*.
+
+### Verify write access
+
+**Option A — GitHub UI**
+
+- Go to **github.com/settings/installations**, find **Claude**, click **Configure**.
+- Confirm your repo appears under *Repository access* and that the app's permission
+  page shows **Contents: Read and write**.
+
+**Option B — Remote session smoke test**
+
+```bash
+claude --remote "Create a file test-write.txt containing 'ok', commit it to a new branch called test/write-check, push it, and report success or the exact error."
+```
+
+Then check locally:
+
+```bash
+git fetch origin
+git branch -r   # origin/test/write-check should appear if the push succeeded
+```
+
+A `403 Resource not accessible by integration` error means the App is not installed
+or was installed without write permissions — reinstall it and explicitly re-select
+the repo.
+
+**Option C — Skip GitHub entirely (bundle mode)**
+
+If you cannot install the App (org restrictions, no admin rights), use bundle mode
+instead — the CLI uploads your working tree directly and no GitHub push is needed:
+
+```bash
+CCR_FORCE_BUNDLE=1 claude --remote "<your prompt>"
+```
+
+---
+
 ## Step 1 — Configure the cloud environment
 
 Cloud sessions start from a clean VM. If your project needs extra tooling (LaTeX,
@@ -188,6 +247,7 @@ git push
 | Session fails immediately | Setup script error | Check script syntax; run `check-tools` in a manual session first |
 | `pdflatex: command not found` | TeX not installed | Verify the setup script ran; check environment logs on claude.ai |
 | `jupytext: command not found` | pip install failed | Confirm network access allows PyPI; add `pip install jupytext` to setup script |
+| `403 Resource not accessible by integration` on push | GitHub App not installed or missing write permission | Follow Step 0 to install the App with Contents: Read & write, or use `CCR_FORCE_BUNDLE=1` |
 | Teleport says "branch not found" | Cloud session didn't push the branch | Ask Claude in the session to `git push -u origin HEAD` before teleporting |
 | IP allowlist error | Org blocks Anthropic infrastructure IPs | Cloud sessions call Anthropic APIs from Anthropic's network — exempt those IPs or use a personal account |
 | Bundle too large | Repo exceeds 100 MB | Add large binaries to `.gitignore` or use a GitHub-connected repo |
