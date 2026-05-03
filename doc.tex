@@ -1,0 +1,224 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{expansion=false}{microtype}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% lmodern not available; using default CM fonts
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{bayes-theorem-a-foundation-of-probabilistic-reasoning}{%
+\section{Bayes' Theorem: A Foundation of Probabilistic
+Reasoning}\label{bayes-theorem-a-foundation-of-probabilistic-reasoning}}
+
+\hypertarget{abstract}{%
+\subsection{Abstract}\label{abstract}}
+
+Bayes' theorem describes how to update beliefs in light of new evidence.
+First formulated by Thomas Bayes in the 18th century and later developed
+by Pierre-Simon Laplace, it has become a cornerstone of statistics,
+machine learning, and scientific inference. This document presents the
+theorem, its derivation, key interpretations, and several illustrative
+applications including medical testing and spam filtering.
+
+\hypertarget{introduction}{%
+\subsection{1. Introduction}\label{introduction}}
+
+Probability theory provides a rigorous language for reasoning under
+uncertainty. Among its most powerful tools is Bayes' theorem, which
+relates the conditional probability of a hypothesis given observed data
+to the prior probability of the hypothesis and the likelihood of the
+data. In an era of data-driven decision-making, Bayesian reasoning
+underlies applications ranging from clinical trials to autonomous
+vehicles.
+
+The central question Bayes' theorem answers is: \emph{given that we have
+observed some evidence, how should we rationally revise our belief about
+a hypothesis?}
+
+\hypertarget{mathematical-formulation}{%
+\subsection{2. Mathematical
+Formulation}\label{mathematical-formulation}}
+
+\hypertarget{conditional-probability}{%
+\subsubsection{2.1 Conditional
+Probability}\label{conditional-probability}}
+
+The conditional probability of event \(A\) given event \(B\) is defined
+as:
+
+\[P(A \mid B) = \frac{P(A \cap B)}{P(B)}, \quad P(B) > 0\]
+
+By symmetry, \(P(B \mid A) = \frac{P(A \cap B)}{P(A)}\), so:
+
+\[P(A \cap B) = P(A \mid B)\,P(B) = P(B \mid A)\,P(A)\]
+
+\hypertarget{bayes-theorem}{%
+\subsubsection{2.2 Bayes' Theorem}\label{bayes-theorem}}
+
+Rearranging the identity above yields \textbf{Bayes' theorem}:
+
+\[\boxed{P(A \mid B) = \frac{P(B \mid A)\,P(A)}{P(B)}}\]
+
+In the context of hypothesis testing, we write \(H\) for a hypothesis
+and \(D\) for observed data:
+
+\[P(H \mid D) = \frac{P(D \mid H)\,P(H)}{P(D)}\]
+
+The terms have well-known names:
+
+\begin{itemize}
+\tightlist
+\item
+  \(P(H)\) --- the \textbf{prior}: our belief in \(H\) before seeing
+  \(D\)
+\item
+  \(P(D \mid H)\) --- the \textbf{likelihood}: how probable the data are
+  if \(H\) is true
+\item
+  \(P(H \mid D)\) --- the \textbf{posterior}: our updated belief after
+  seeing \(D\)
+\item
+  \(P(D)\) --- the \textbf{marginal likelihood} (evidence): a
+  normalising constant
+\end{itemize}
+
+\hypertarget{the-law-of-total-probability}{%
+\subsubsection{2.3 The Law of Total
+Probability}\label{the-law-of-total-probability}}
+
+When \(H\) takes discrete values \(H_1, H_2, \ldots, H_n\) that
+partition the sample space, the denominator expands via the law of total
+probability:
+
+\[P(D) = \sum_{i=1}^{n} P(D \mid H_i)\,P(H_i)\]
+
+This gives the full form:
+
+\[P(H_k \mid D) = \frac{P(D \mid H_k)\,P(H_k)}{\displaystyle\sum_{i=1}^{n} P(D \mid H_i)\,P(H_i)}\]
+
+\hypertarget{applications}{%
+\subsection{3. Applications}\label{applications}}
+
+\hypertarget{medical-diagnostic-testing}{%
+\subsubsection{3.1 Medical Diagnostic
+Testing}\label{medical-diagnostic-testing}}
+
+Consider a disease affecting 1\% of a population. A test has 99\%
+sensitivity (true-positive rate) and 95\% specificity (true-negative
+rate, so 5\% false-positive rate). Given a positive test result, what is
+the probability the patient has the disease?
+
+Let \(H\) = ``patient has disease'' and \(D\) = ``test is positive'':
+
+\[P(H) = 0.01, \quad P(D \mid H) = 0.99, \quad P(D \mid \neg H) = 0.05\]
+
+\[P(D) = 0.99 \times 0.01 + 0.05 \times 0.99 = 0.0099 + 0.0495 = 0.0594\]
+
+\[P(H \mid D) = \frac{0.99 \times 0.01}{0.0594} \approx 0.167\]
+
+Despite the accurate test, only about 16.7\% of positive results
+correspond to true disease. This counterintuitive result is a direct
+consequence of the low base rate, illustrating why prior probabilities
+matter enormously.
+
+\hypertarget{bayesian-spam-filtering}{%
+\subsubsection{3.2 Bayesian Spam
+Filtering}\label{bayesian-spam-filtering}}
+
+A spam filter estimates \(P(\text{spam} \mid \text{words in email})\).
+Using a naive Bayes classifier, it assumes word occurrences are
+conditionally independent given the class, then applies:
+
+\[P(\text{spam} \mid w_1, \ldots, w_n) \propto P(\text{spam})\prod_{i=1}^{n}P(w_i \mid \text{spam})\]
+
+Training data provide the likelihoods \(P(w_i \mid \text{spam})\) and
+\(P(w_i \mid \text{ham})\), and the prior \(P(\text{spam})\) is
+estimated from the proportion of spam in the training set.
+
+\hypertarget{the-bayesian-vs.-frequentist-debate}{%
+\subsection{4. The Bayesian vs.~Frequentist
+Debate}\label{the-bayesian-vs.-frequentist-debate}}
+
+Frequentists interpret probability as the long-run frequency of events;
+they do not assign probabilities to hypotheses. Bayesians treat
+probability as a degree of belief, permitting statements like ``there is
+a 73\% chance this hypothesis is true.'' The two schools differ in how
+they handle prior information:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Frequentists} rely solely on the likelihood function and avoid
+  priors.
+\item
+  \textbf{Bayesians} explicitly encode prior knowledge, which is then
+  updated by data.
+\end{itemize}
+
+In practice, both approaches are valuable; the Bayesian framework is
+especially useful when prior knowledge is available or when sequential
+updating of beliefs is required.
+
+\hypertarget{conclusion}{%
+\subsection{5. Conclusion}\label{conclusion}}
+
+Bayes' theorem is a deceptively simple equation with profound
+implications. It provides a principled mechanism for learning from
+evidence: start with a prior belief, observe data, compute the
+likelihood, and obtain a posterior belief. Applications span medicine,
+finance, natural language processing, robotics, and fundamental science.
+As datasets grow and computational power increases, Bayesian methods
+continue to gain prominence as a rigorous framework for inference under
+uncertainty.
+
+\end{document}
